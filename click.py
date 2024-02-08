@@ -22,7 +22,7 @@ cookies = 0
 
 # upgrades
 cookie_click = 1
-babushkas = 99990
+babushkas = 0
 passive_cookie = 0
 
 
