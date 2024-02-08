@@ -3,30 +3,70 @@ import math
 
 pygame.init()
 
+
+# todo list
+
+# battlepass
+# more upgrades
+# show passive cookies
+# saving system
+
+
 # Set up the drawing window
 screen = pygame.display.set_mode([500, 500])
 
 
-cookies = 100
-cookie_click = 10000
-babushkas = 0
+# money
+cookies = 0
 
-upgradecost = 20
-babushka_cost = 100
+
+# upgrades
+cookie_click = 1
+babushkas = 99990
 passive_cookie = 0
 
 
+# upgrade costs
+upgradecost = 20
+babushka_cost = 100
+
+
+
+# buttons
 upgradeSurface = pygame.Surface ((100, 50))
 upgradeRect = pygame.Rect(20, 50, 100, 100)
 font = pygame.font.Font(None, 30)
 
+# text_render(250, 120, f"babushkas: {babushkas}")
 babushkaSurface = pygame.Surface ((100, 50))
-babushkaRect = pygame.Rect(150, 50, 100, 100)
+babushkaRect = pygame.Rect(250, 50, 100, 100)
 
+
+
+# passive cookie
 BABUSKA_MAKE_COOKIE_EVENT_TYPE = pygame.USEREVENT + 1
 
 pygame.time.set_timer(pygame.event.Event(BABUSKA_MAKE_COOKIE_EVENT_TYPE), 1000)
 
+
+
+# transaction shop function
+def transaction(cost, product, ffk):
+    global cookies
+    if cookies >= cost:
+        product += 1
+        cookies -= cost
+        cost*=ffk
+        math.ceil(cost)
+        cost = int(cost)
+    return cost, product
+    
+
+# text function
+def text_render(left, top, text):
+    text_rect = pygame.Rect(left, top, 0, 0)
+    text_render = font.render(str(text), True, pygame.Color(0, 0, 0))
+    screen.blit(text_render, text_rect)
 
 
 
@@ -37,6 +77,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        # passive cookie addition
         if event.type == BABUSKA_MAKE_COOKIE_EVENT_TYPE:
             cookies += babushkas
 
@@ -44,26 +85,15 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             if upgradeRect.collidepoint(pos):
-                if cookies >= upgradecost:
-                    cookie_click += 1
-                    cookies -= upgradecost
-                    upgradecost*=1.4
-                    math.ceil(upgradecost)
-                    upgradecost = int(upgradecost)
-                    print(upgradecost)
-
+                upgradecost, cookie_click = transaction(upgradecost, cookie_click, 1.4)
+                
+                
             # BABUSHKA TRANSACTION
             if babushkaRect.collidepoint(pos):
-                if cookies >= babushka_cost:
-                    babushkas += 1
-                    cookies -= babushka_cost
-                    babushka_cost*=1.5
-                    math.ceil(babushka_cost)
-                    babushka_cost = int(babushka_cost)
-                    print(babushka_cost)
-                    print("babushka bought " + str(babushkas) + " " + str(babushka_cost))
+                babushka_cost, babushkas = transaction(babushka_cost, babushkas, 1.5)
 
 
+        # listen for keyboard events
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 cookies += cookie_click
@@ -73,10 +103,23 @@ while running:
     # Fill the background with white
     screen.fill((255, 255, 255))
 
-    # Display cookies
-    text_rect = pygame.Rect(20, 20, 0, 0)
-    text_to_render = font.render("cookies: " + str(cookies) , True, pygame.Color(0, 0, 0))
-    screen.blit(text_to_render, text_rect)
+
+    # display cookies
+    text_render(20, 20, f"cookies: {cookies}")
+
+    # display cookies/click
+    text_render(20, 120, f"cookies / click: {cookie_click}")
+
+    # display cost of cookies/click
+    text_render(20, 140, f"baker cost: {upgradecost}")
+
+    # display babushkas
+    text_render(250, 120, f"babushkas: {babushkas}")
+
+    #display babushka cost
+    text_render(250, 140, f"cost of babushka: {babushka_cost}")
+    
+        
 
     # Upgrade Button
     upgradeSurface.fill ((0, 0, 0))
