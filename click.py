@@ -52,6 +52,19 @@ BABUSKA_MAKE_COOKIE_EVENT_TYPE = pygame.USEREVENT + 1
 
 pygame.time.set_timer(pygame.event.Event(BABUSKA_MAKE_COOKIE_EVENT_TYPE), 1000)
 
+# animated message setup
+class AnimatedMessage:
+    def __init__(self, text: str, color: pygame.Color):
+        self.animation_factor = 0
+        self.text = text
+        self.color = color
+        x, y = pygame.mouse.get_pos()
+
+        self.origin_x = x
+        self.origin_y = y 
+
+animated_messages = []
+
 
 # passive factory
 PASSIVE_FACTORY = pygame.USEREVENT + 2
@@ -65,16 +78,26 @@ def transaction(cost, product, ffk):
     if cookies >= cost:
         product += 1
         cookies -= cost
-        cost*=ffk
+        cost *= ffk
         math.ceil(cost)
         cost = int(cost)
+        animated_messages.append(
+            AnimatedMessage("you are so rich $$$", pygame.Color(0, 255, 0))
+        )
+    else: # if we are poor bozos and dont have enugh money (lol)
+        animated_messages.append(
+            AnimatedMessage("du är så fattig (xd)", pygame.Color(255, 0, 0))
+        )
+
     return cost, product
     
 
 # text function
-def text_render(left, top, text):
+def text_render(left, top, text, color=pygame.Color(0, 0, 0), center_text=False):
     text_rect = pygame.Rect(left, top, 0, 0)
-    text_render = font.render(str(text), True, pygame.Color(0, 0, 0))
+    text_render = font.render(str(text), True, color)
+    if center_text == True:
+        text_rect.left -= int(text_render.get_width()/2)
     screen.blit(text_render, text_rect)
 
 
@@ -140,6 +163,7 @@ while running:
     #display babushka cost
     text_render(250, 140, f"babushka cost: {babushka_cost}")
 
+
     # display factory
     text_render(20, 250, f"factories: {factory}")
 
@@ -160,6 +184,24 @@ while running:
     factorySurface.fill((158, 158, 158))
     screen.blit(factorySurface, factoryRect)
     
+
+    # render animated messages and advance the animation by one step
+    for message in animated_messages.copy():
+        message: AnimatedMessage
+        message.animation_factor += 0.01
+        y_offset = message.animation_factor * 10
+        x_offset = math.sin(message.animation_factor) * 10
+
+        text_render(
+            message.origin_x + x_offset,
+            message.origin_y - y_offset,
+            message.text,
+            color=message.color,
+            center_text=True
+        )
+
+        if message.animation_factor >= 10:
+            animated_messages.remove(message)
    
 
 
