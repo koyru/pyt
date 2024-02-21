@@ -5,12 +5,13 @@ pygame.init()
 
 
 # todo list
-
+# ----------
 # battlepass
 # more upgrades
 # saving system
 # random events
-
+# text in button
+# achievements with rewards
 
 # Set up the drawing window
 screen = pygame.display.set_mode([500, 500])
@@ -162,7 +163,6 @@ while running:
 
     #display babushka cost
     text_render(250, 140, f"babushka cost: {babushka_cost}")
-
 
     # display factory
     text_render(20, 250, f"factories: {factory}")
