@@ -56,6 +56,7 @@ pygame.time.set_timer(pygame.event.Event(BABUSKA_MAKE_COOKIE_EVENT_TYPE), 1000)
 # animated message setup
 class AnimatedMessage:
     def __init__(self, text: str, color: pygame.Color):
+        # initialize fields for the instance
         self.animation_factor = 0
         self.text = text
         self.color = color
@@ -64,6 +65,7 @@ class AnimatedMessage:
         self.origin_x = x
         self.origin_y = y 
 
+#this list will contain AnimatedMessages instances
 animated_messages = []
 
 
@@ -187,8 +189,17 @@ while running:
 
     # render animated messages and advance the animation by one step
     for message in animated_messages.copy():
+
         message: AnimatedMessage
+        # ^
+        # what this line does is says that variable 'message' is of type 'AnimatedMessage'
+        # the only reason for this line is that now i get autocomplete
+
         message.animation_factor += 0.01
+        # ^
+        # btw func fact, this line is bad because it is framerate dependant and the 
+        # animation will be different speed depending on framerate
+
         y_offset = message.animation_factor * 10
         x_offset = math.sin(message.animation_factor) * 10
 
@@ -201,6 +212,8 @@ while running:
         )
 
         if message.animation_factor >= 10:
+            # remove message from animated_messages list so it does not get rendered anymore.
+            # (basicly the message gets practicly deleted)
             animated_messages.remove(message)
    
 
